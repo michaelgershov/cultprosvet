@@ -97,5 +97,3 @@ else:
     pg = st.navigation([st.Page(login, title="Войти"), st.Page(register, title="Зарегистрироваться")])
 
 pg.run()
-
-
