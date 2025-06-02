@@ -7,11 +7,13 @@ from tmdb import tmdb_similar_movies
 
 @st.cache_data(ttl=3600)
 def get_movie_history(user_id, movie_id):
-    return supabase_client.table('history').select('*').eq('user_id', user_id).eq('movie_id', movie_id).execute()
+    response = supabase_client.table('history').select('*').eq('user_id', user_id).eq('movie_id', movie_id).execute()
+    return response.data
 
 @st.cache_data(ttl=3600)
 def get_movie_from_db(movie_name):
-    return supabase_client.table('movies').select('id, name').eq('name', movie_name).execute()
+    response = supabase_client.table('movies').select('id, name').eq('name', movie_name).execute()
+    return response.data
 
 @st.cache_data(ttl=3600)
 def get_poster_url(poster_path):
@@ -34,11 +36,14 @@ def show_movie_details(movie):
     }
     
     # Проверяем существование записи с использованием кэшированной функции
-    existing_record = get_movie_history(history_data['user_id'], history_data['movie_id'])
+    try:
+        existing_record = get_movie_history(history_data['user_id'], history_data['movie_id'])
+    except:
+        existing_record = []
     
-    if len(existing_record.data) > 0:
+    if len(existing_record) > 0:
         # Если запись существует, увеличиваем watched на 1
-        current_watched = existing_record.data[0]['watched']
+        current_watched = existing_record[0]['watched']
         supabase_client.table('history').update({'watched': current_watched + 1}).eq('user_id', history_data['user_id']).eq('movie_id', history_data['movie_id']).execute()
     else:
         # Если записи нет, создаем новую с watched = 1
@@ -165,8 +170,8 @@ def show_movie_details(movie):
 
     # Получаем текущий рейтинг
     current_rating = None
-    if existing_record.data and existing_record.data[0]['rating'] is not None:
-        current_rating = existing_record.data[0]['rating']
+    if existing_record and existing_record[0]['rating'] is not None:
+        current_rating = existing_record[0]['rating']
 
     # Добавляем CSS для кнопок рейтинга и звезд
     st.markdown(f'''
@@ -205,7 +210,7 @@ def show_movie_details(movie):
         for i, col in enumerate(cols, 1):
             if col.button("★", key=f"star_{i}", use_container_width=True):
                 # Обновляем рейтинг в базе данных
-                if existing_record.data:
+                if existing_record:
                     supabase_client.table('history').update({'rating': i}).eq('user_id', history_data['user_id']).eq('movie_id', history_data['movie_id']).execute()
                 else:
                     history_data['rating'] = i
