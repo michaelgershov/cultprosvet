@@ -2,8 +2,12 @@ from supabase_connection import supabase_client, supabase_bucket_name
 import streamlit as st
 import streamlit.components.v1 as components
 from recommendation import recommendation
-import pandas as pd
+import re
 from tmdb import tmdb_similar_movies
+
+
+def has_cyrillic(text):
+    return bool(re.search('[а-яА-Я]', text))
 
 @st.cache_data(ttl=3600)
 def get_movie_history(user_id, movie_id):
@@ -250,44 +254,47 @@ def show_movie_details(movie):
                         st.session_state.selected_movie_id = found_movie['id']
                         st.rerun()
             else:
-                for similar_movie in similar_movies[:5]:
-                    st.markdown(f"""
-                        <style>
-                        .st-link-button {{
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-family: "Source Sans Pro", sans-serif;
-                            font-size: 1rem;
-                            font-weight: 400;
-                            line-height: 1.6;
-                            color: rgb(250, 250, 250);
-                            background-color: rgb(19, 23, 32);
-                            border: 1px solid rgba(250, 250, 250, 0.2);
-                            border-radius: 0.5rem;
-                            padding: 0.25rem 0.75rem;
-                            min-height: 2.5rem;
-                            margin: 0px;
-                            cursor: pointer;
-                            text-align: center;
-                            text-decoration: none;
-                            transition: all 0.2s ease;
-                            user-select: none;
-                            text-transform: none;
-                            width: auto;
-                        }}
-                        .st-link-button:hover {{
-                            color: #b91c1c;
-                            border-color: #b91c1c;
-                        }}
-                        </style>
+                quantity = 0
+                for similar_movie in similar_movies:
+                    if has_cyrillic(similar_movie['name']) and quantity < 6:
+                        st.markdown(f"""
+                            <style>
+                            .st-link-button {{
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-family: "Source Sans Pro", sans-serif;
+                                font-size: 1rem;
+                                font-weight: 400;
+                                line-height: 1.6;
+                                color: rgb(250, 250, 250);
+                                background-color: rgb(19, 23, 32);
+                                border: 1px solid rgba(250, 250, 250, 0.2);
+                                border-radius: 0.5rem;
+                                padding: 0.25rem 0.75rem;
+                                min-height: 2.5rem;
+                                margin: 0px;
+                                cursor: pointer;
+                                text-align: center;
+                                text-decoration: none;
+                                transition: all 0.2s ease;
+                                user-select: none;
+                                text-transform: none;
+                                width: auto;
+                            }}
+                            .st-link-button:hover {{
+                                color: #b91c1c;
+                                border-color: #b91c1c;
+                            }}
+                            </style>
 
-                        <div style="margin: 0.5rem 0;">
-                            <a href="{similar_movie['tmdb_url']}" target="_blank" style="text-decoration: none;">
-                                <button class="st-link-button">{similar_movie['name']}</button>
-                            </a>
-                        </div>
-                    """, unsafe_allow_html=True)
+                            <div style="margin: 0.5rem 0;">
+                                <a href="{similar_movie['tmdb_url']}" target="_blank" style="text-decoration: none;">
+                                    <button class="st-link-button">{similar_movie['name']}</button>
+                                </a>
+                            </div>
+                        """, unsafe_allow_html=True)
+                        quantity += 1
         else:
             st.write(f"К сожалению, системе не удалось найти похожие фильмы.")
 
