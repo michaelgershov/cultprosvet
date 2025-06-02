@@ -256,7 +256,7 @@ def show_movie_details(movie):
             else:
                 quantity = 0
                 for similar_movie in similar_movies:
-                    if has_cyrillic(similar_movie['name']) and quantity < 6:
+                    if has_cyrillic(similar_movie['name']) and quantity < 5:
                         st.markdown(f"""
                             <style>
                             .st-link-button {{
