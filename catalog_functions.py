@@ -235,9 +235,12 @@ def show_movie_details(movie):
             found_movies = []
             for similar_movie in similar_movies:
                 # Ищем фильм в базе данных по названию с использованием кэшированной функции
-                movie_in_db = get_movie_from_db(similar_movie['name'])
-                if movie_in_db.data:
-                    found_movies.append(movie_in_db.data[0])
+                try:
+                    movie_in_db = get_movie_from_db(similar_movie['name'])
+                except:
+                    movie_in_db = []
+                if movie_in_db:
+                    found_movies.append(movie_in_db[0])
                     if len(found_movies) > 5:
                         break
             
