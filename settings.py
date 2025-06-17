@@ -17,7 +17,7 @@ def personal_recommendation(user_id, k=5) -> list:
         for m in movies_sorted[:k]:
             recommended = recommendation(m['movie_id'])
             for r in recommended:
-                related_movies.add(r['id'])
+                related_movies.add(tuple(r))
 
         if related_movies:
             return tuple(related_movies)[:k]
@@ -33,8 +33,17 @@ st.write(f"Email: {st.session_state.user.email}")
 
 st.header("Персональные рекомендации")
 # Получаем похожие фильмы
-st.write(f"{personal_recommendation(st.session_state.user.id)}")
-
+personal_recommended = personal_recommendation(
+    st.session_state.user.id
+)
+if personal_recommended:
+    for m in personal_recommended:
+        if st.button(f"{m['name']}", key=f"{m['id']}"):
+            st.session_state.selected_movie_id = m['id']
+            st.rerun()
+else:
+    st.write("Для получения персональных рекомендаций посмотрите чуть больше фильмов из каталога")
+    
 # Изменение пароля
 st.header("Изменить пароль")
 current_password = st.text_input("Текущий пароль", type="password")
