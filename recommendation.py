@@ -54,7 +54,7 @@ def recommendation(movie_id: int, m=5) -> list:
     else:
         applicants_indeces = []
 
-    if applicants_indeces:  
+    if len(applicants_indeces):  
         movie_distances = distances[movie_index][applicants_indeces]
         sorted_indices = np.argsort(movie_distances)[:m]
         similar_movies = movies.iloc[np.array(applicants_indeces)[sorted_indices]]['id'].values
