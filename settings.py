@@ -20,7 +20,7 @@ def personal_recommendation(user_id, k=5) -> list:
                 related_movies.add(r['id'])
 
         if related_movies:
-            return related_movies[:k]
+            return tuple(related_movies)[:k]
         else:
             return []
     else:
