@@ -26,18 +26,18 @@ def recommendation(movie_id: int, m=5) -> list:
     
     # Фильтруем фильмы по жанру и возрастному ограничению
     applicants_genre_age = []
-    applicants_genre = []
-    applicants_age = []
+    # applicants_genre = []
+    # applicants_age = []
     for i in ids:
         i_genre = movies[movies['id'] == i]['genre'].iloc[0]
         i_age_limit = movies[movies['id'] == i]['age_limit'].iloc[0]
 
         if (i_genre & genre) and (i_age_limit >= age_limit):
             applicants_genre_age.append(i)
-        elif i_genre & genre:
-            applicants_genre.append(i)
-        elif i_age_limit >= age_limit:
-            applicants_age.append(i)
+        # elif i_genre & genre:
+        #     applicants_genre.append(i)
+        # elif i_age_limit >= age_limit:
+        #     applicants_age.append(i)
         else:
             continue
         
@@ -47,10 +47,10 @@ def recommendation(movie_id: int, m=5) -> list:
     
     if applicants_genre_age:
         applicants_indeces = movies[movies['id'].isin(applicants_genre_age)].index
-    elif applicants_genre:
-        applicants_indeces = movies[movies['id'].isin(applicants_genre)].index 
-    elif applicants_age:
-        applicants_indeces = movies[movies['id'].isin(applicants_age)].index
+    # elif applicants_genre:
+    #     applicants_indeces = movies[movies['id'].isin(applicants_genre)].index 
+    # elif applicants_age:
+    #     applicants_indeces = movies[movies['id'].isin(applicants_age)].index
     else:
         applicants_indeces = []
 
