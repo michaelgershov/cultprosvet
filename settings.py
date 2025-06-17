@@ -8,6 +8,8 @@ st.subheader("Информация о пользователе")
 st.write(f"Email: {st.session_state.user.email}")
 st.write(f"ID пользователя: {st.session_state.user.id}")
 
+st.subheader("Персональные рекомендации")
+
 # Изменение пароля
 st.subheader("Изменить пароль")
 current_password = st.text_input("Текущий пароль", type="password")
@@ -29,15 +31,15 @@ if st.button("Изменить пароль"):
 
 # Удаление аккаунта
 st.subheader("Удаление аккаунта")
-st.warning("Внимание: это действие необратимо. Все ваши данные будут удалены.")
-if st.button("Удалить аккаунт", type="primary"):
-    if st.checkbox("Я подтверждаю удаление аккаунта"):
-        try:
-            # Удаляем пользователя через Supabase
-            supabase_client.auth.admin.delete_user(st.session_state.user.id)
-            st.success("Аккаунт успешно удален")
-            # Выходим из системы
-            supabase_logout()
-            st.rerun()
-        except Exception as e:
-            st.error(f"Ошибка при удалении аккаунта: {str(e)}")
+st.warning("Данный функционал находится в разработке.")
+# if st.button("Удалить аккаунт", type="primary"):
+#     if st.checkbox("Я подтверждаю удаление аккаунта"):
+#         try:
+#             # Удаляем пользователя через Supabase
+#             supabase_client.auth.admin.delete_user(st.session_state.user.id)
+#             st.success("Аккаунт успешно удален")
+#             # Выходим из системы
+#             supabase_logout()
+#             st.rerun()
+#         except Exception as e:
+#             st.error(f"Ошибка при удалении аккаунта: {str(e)}")

@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_distances
 
 
 
-def recommendation(movie_id: int, k=10, m=5) -> list:
+def recommendation(movie_id: int, m=5) -> list:
     movies = pd.DataFrame(
         supabase_client.table('movies').select('*').execute().data
     )
@@ -25,21 +25,36 @@ def recommendation(movie_id: int, k=10, m=5) -> list:
     ids.remove(movie_id)
     
     # Фильтруем фильмы по жанру и возрастному ограничению
-    applicants = []
+    applicants_genre_age = []
+    applicants_genre = []
+    applicants_age = []
     for i in ids:
         i_genre = movies[movies['id'] == i]['genre'].iloc[0]
         i_age_limit = movies[movies['id'] == i]['age_limit'].iloc[0]
 
         if (i_genre & genre) and (i_age_limit >= age_limit):
-            applicants.append(i)
-            if len(applicants) > k:
-                break
+            applicants_genre_age.append(i)
+        elif i_genre & genre:
+            applicants_genre.append(i)
+        elif i_age_limit >= age_limit:
+            applicants_age.append(i)
+        else:
+            continue
+        
     
     distances = cosine_distances(np.stack(movies['embedding'].values))
     movie_index = movies[movies['id'] == movie_id].index[0]
     
-    if applicants:
-        applicants_indeces = movies[movies['id'].isin(applicants)].index
+    if applicants_genre_age:
+        applicants_indeces = movies[movies['id'].isin(applicants_genre_age)].index
+    elif applicants_genre:
+        applicants_indeces = movies[movies['id'].isin(applicants_genre)].index 
+    elif applicants_age:
+        applicants_indeces = movies[movies['id'].isin(applicants_age)].index
+    else:
+        applicants_indeces = []
+
+    if applicants_indeces:  
         movie_distances = distances[movie_index][applicants_indeces]
         sorted_indices = np.argsort(movie_distances)[:m]
         similar_movies = movies.iloc[np.array(applicants_indeces)[sorted_indices]]['id'].values
@@ -53,6 +68,3 @@ def recommendation(movie_id: int, k=10, m=5) -> list:
         similar_movies = []
 
     return similar_movies
-    
-
-    
