@@ -13,11 +13,11 @@ def personal_recommendation(user_id, k=5) -> list:
             history,
             key=lambda x: x['watched']
         )
-        related_movies = set()
+        related_movies = []
         for m in movies_sorted[:k]:
             recommended = recommendation(m['movie_id'])
             for r in recommended:
-                related_movies.add(tuple(r))
+                related_movies.append(r)
 
         if related_movies:
             return tuple(related_movies)[:k]
