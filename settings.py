@@ -13,11 +13,11 @@ def personal_recommendation(user_id, k=5) -> list:
             history,
             key=lambda x: x['watched']
         )
-        related_movies = []
+        related_movies = set()
         for m in movies_sorted[:k]:
             recommended = recommendation(m['movie_id'])
             for r in recommended:
-                related_movies.append(r)
+                related_movies.add(tuple(r.values()))
 
         if related_movies:
             return tuple(related_movies)[:k]
@@ -38,10 +38,9 @@ personal_recommended = personal_recommendation(
 )
 if personal_recommended:
     for m in personal_recommended:
-        st.write(f"{m}")
-        # if st.button(f"{m[0]}", key=f"{m[0]}"):
-        #     st.session_state.selected_movie_id = m['id']
-        #     st.rerun()
+        if st.button(f"{m[1]}", key=f"{m[0]}"):
+            st.session_state.selected_movie_id = m[0]
+            st.rerun()
 else:
     st.write("Для получения персональных рекомендаций посмотрите чуть больше фильмов из каталога")
     
