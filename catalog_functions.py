@@ -299,6 +299,6 @@ def show_movie_details(movie):
             st.write(f"К сожалению, системе не удалось найти похожие фильмы.")
 
     st.divider()
-    if st.button('← Назад к расписанию'):
+    if st.button('← Назад'):
         st.session_state.selected_movie_id = None
         st.rerun()
