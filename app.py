@@ -70,8 +70,8 @@ def register():
 user = st.session_state.user
 
 logout_page = st.Page(logout, title="Выйти", icon=":material/logout:")
-settings = st.Page("settings.py", title="Личный кабинет", icon=":material/AccessibilityNew:")
-about = st.Page("about.py", title="О проекте", icon=":material/EmojiFoodBeverage:")
+settings = st.Page("settings.py", title="Личный кабинет", icon=":material/settings_accessibility:")
+about = st.Page("about.py", title="О проекте", icon=":material/book:")
 catalog = st.Page(
     "catalog.py",
     title="Каталог",
