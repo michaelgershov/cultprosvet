@@ -70,7 +70,8 @@ def register():
 user = st.session_state.user
 
 logout_page = st.Page(logout, title="Выйти", icon=":material/logout:")
-settings = st.Page("settings.py", title="Параметры", icon=":material/settings:")
+settings = st.Page("settings.py", title="Личный кабинет", icon=":material/AccessibilityNew:")
+about = st.Page("about.py", title="О проекте", icon=":material/EmojiFoodBeverage:")
 catalog = st.Page(
     "catalog.py",
     title="Каталог",
@@ -79,7 +80,7 @@ catalog = st.Page(
 )
 
 
-account_pages = [logout_page, settings]
+account_pages = [about, settings, logout_page]
 catalog_pages = [catalog]
 
 
@@ -92,7 +93,7 @@ if st.session_state.user:
 
 
 if len(page_dict) > 0:
-    pg = st.navigation({"Пользователь": account_pages} | page_dict)
+    pg = st.navigation(page_dict | {"Не каталог": account_pages})
 else:
     pg = st.navigation([st.Page(login, title="Войти"), st.Page(register, title="Зарегистрироваться")])
 
