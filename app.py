@@ -84,7 +84,7 @@ account_pages = [about, settings, logout_page]
 catalog_pages = [catalog]
 
 
-st.title("Приложение-агрегатор")
+st.title("Культпросвет")
 st.logo("images/horizontal.png", icon_image="images/icon_blue.png")
 
 page_dict = {}

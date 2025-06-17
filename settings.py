@@ -1,17 +1,42 @@
 import streamlit as st
-from supabase_connection import supabase_client, supabase_logout
+from supabase_connection import supabase_client
+from recommendation import recommendation
+
+def load_history(user_id):
+    response = supabase_client.table('history').select('*').eq('user_id', user_id).execute()
+    return response.data or []
+
+def personal_recommendation(user_id, k=5) -> list:
+    history = load_history(user_id)
+    if len(history):
+        movies_sorted = sorted(
+            history,
+            key=lambda x: x['watched']
+        )
+        related_movies = set()
+        for m in movies_sorted[:k]:
+            recommended = recommendation(m['movie_id'])
+            for r in recommended:
+                related_movies.add(r['id'])
+
+        if related_movies:
+            return related_movies[:k]
+        else:
+            return []
+    else:
+        return []
 
 st.header("Параметры пользователя")
 
 # Отображение информации о пользователе
-st.subheader("Информация о пользователе")
 st.write(f"Email: {st.session_state.user.email}")
-st.write(f"ID пользователя: {st.session_state.user.id}")
 
-st.subheader("Персональные рекомендации")
+st.header("Персональные рекомендации")
+# Получаем похожие фильмы
+st.write(f"{personal_recommendation(st.session_state.user.id)}")
 
 # Изменение пароля
-st.subheader("Изменить пароль")
+st.header("Изменить пароль")
 current_password = st.text_input("Текущий пароль", type="password")
 new_password = st.text_input("Новый пароль", type="password")
 confirm_password = st.text_input("Подтвердите новый пароль", type="password")
@@ -30,7 +55,7 @@ if st.button("Изменить пароль"):
             st.error(f"Ошибка при изменении пароля: {str(e)}")
 
 # Удаление аккаунта
-st.subheader("Удаление аккаунта")
+st.header("Удаление аккаунта")
 st.warning("Данный функционал находится в разработке.")
 # if st.button("Удалить аккаунт", type="primary"):
 #     if st.checkbox("Я подтверждаю удаление аккаунта"):
