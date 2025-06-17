@@ -40,6 +40,7 @@ if personal_recommended:
     for m in personal_recommended:
         if st.button(f"{m[1]}", key=f"{m[0]}"):
             st.session_state.selected_movie_id = m[0]
+            st.session_state.current_page = "movie"
             st.rerun()
 else:
     st.write("Для получения персональных рекомендаций посмотрите чуть больше фильмов из каталога")
